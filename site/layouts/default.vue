@@ -1,20 +1,33 @@
 <template>
   <div>
-    <Nuxt />
+    <navigation />
+    <div v-if="$store.state.auth.loggingIn"></div>
+    <div v-else>
+      <Nuxt v-if="$store.state.auth.isAuthenticated" />
+      <div v-else>
+        Problem. You are not logged in to access this page.
+        <nuxt-link to="/">Home</nuxt-link>
+      </div>
+    </div>
   </div>
 </template>
 
+<script>
+import Navigation from '../components/Navigation'
+export default {
+  components: {
+    Navigation,
+  },
+  async mounted() {
+    await this.$store.dispatch('auth/handleAuthentication')
+  },
+}
+</script>
+
 <style>
 html {
-  font-family:
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
@@ -58,5 +71,23 @@ html {
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
+}
+
+.title {
+  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  display: block;
+  font-weight: 300;
+  font-size: 100px;
+  color: #35495e;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-weight: 300;
+  font-size: 42px;
+  color: #526488;
+  word-spacing: 5px;
+  padding-bottom: 15px;
 }
 </style>

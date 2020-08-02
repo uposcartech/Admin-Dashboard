@@ -5,7 +5,8 @@ let user
 
 export const state = () => ({
   isAuthenticated: false,
-  loggingIn: true
+  loggingIn: true,
+  requiresAuth: false
 })
 
 export const mutations = {
@@ -18,6 +19,12 @@ export const mutations = {
   },
   loggedIn(state) {
     state.loggingIn = false
+  },
+  requiresAuth(state) {
+    state.requiresAuth = true
+  },
+  unrequireAuth(state) {
+    state.requiresAuth = false
   }
 }
 
@@ -33,8 +40,6 @@ export const actions = {
       redirectUri: window.location.origin + '/dashboard',
       responseType: 'id_token token',
     })
-
-    console.log(auth, auth0)
   },
 
   async login({
@@ -67,8 +72,6 @@ export const actions = {
             return reject(err)
           }
 
-          console.log(authResult)
-
           auth0.client.userInfo(authResult.accessToken, function (err, user) {
             if (err) {
               return reject(err)
@@ -90,8 +93,6 @@ export const actions = {
   }) {
     await dispatch('init')
     user = await dispatch('parseHash')
-    console.log(auth0, user, 'user')
-    // auth0.parseHash({ hash: window.location.hash })
     return user
   },
 
@@ -100,62 +101,49 @@ export const actions = {
     state,
     commit
   }) {
-    console.log('state', state.isAuthenticated)
     // If we are not on dashboard - do nothing. We only need authentication here
     if (window.location.pathname !== '/dashboard') {
+      commit('unrequireAuth')
       return
     }
 
-    // If user is set we are authenticated
-    // if (user) {
-    //   console.log('we have a user')
-    //   return
-    // }
+    commit('requiresAuth')
 
     // If we are authenticated, and we're still in authenticate mode, redirect
     if (
       state.isAuthenticated &&
       window.location.hash.includes('access_token')
     ) {
-      console.log('we are authenticated but in authenticate mode still')
       this.app.router.push('/dashboard')
       return
     }
-    console.log('+1', state.loggingIn)
+
     // If we are authenticated, do nothing
     if (state.isAuthenticated) {
-      commit('loggedIn')
-      console.log('we are authenticated')
       return
     }
-    console.log('+2', state.loggingIn)
+
     // Now, if there is an access token, please parse it
     if (window.location.hash.includes('access_token')) {
-      console.log('we are going to access a token')
       commit('loggingIn')
       let response = await dispatch('authenticate')
       user = response.user
 
       if (!user) {
         // @todo go to login page - something has gone wrong
-        console.log('go to login page - something has gone wrong')
         commit('loggedIn')
         return
       }
 
       if (response && response.user) {
-        console.log('Great! Logged in')
         commit('authenticate')
         this.app.router.push('/dashboard')
         return
       }
     }
-    console.log('+', state.loggingIn)
+
     if (!state.isAuthenticated) {
-      console.log('isNotAuthenticated')
       return await dispatch('login')
     }
-
-    console.log('user', user)
-  }
+  },
 }

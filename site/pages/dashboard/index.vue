@@ -1,15 +1,9 @@
 <template>
-  <div class="container">
-    <div>
+  <div>
+    <div class="container">
       <div class="subtitle">
         Dashboard
       </div>
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  layout: 'dashboard',
-}
-</script>

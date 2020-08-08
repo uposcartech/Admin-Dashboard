@@ -7,7 +7,8 @@
     "build": "nuxt build site",
     "start": "nuxt start site",
     "generate": "nuxt generate site",
-    "test": "jest"
+    "test": "jest",
+    "test:e2e": "wdio wdio.conf.js"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.11.0",
@@ -24,6 +25,13 @@
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^26.1.0",
     "prettier": "^2.0.5",
-    "vue-jest": "^3.0.4"
+    "vue-jest": "^3.0.4",
+    "@wdio/cli": "^6.3.5",
+    "@wdio/local-runner": "^6.3.5",
+    "@wdio/mocha-framework": "^6.3.0",
+    "@wdio/spec-reporter": "^6.3.0",
+    "@wdio/sync": "^6.3.3",
+    "eslint-plugin-wdio": "^6.0.12",
+    "webdriverio": "^6.3.5"
   }
 }
